@@ -8,20 +8,17 @@ data class Post(
     val canEdited: Boolean = true,
     val canPined: Boolean = true,
 )
-
 data class Likes(
     val countLikes: Int
 )
-
 data class Comments(
     val countComments: Int
 )
-
 object WallService {
     private var posts = arrayOf<Post>()
     private var lastId = 0
     fun add(post: Post): Post {
-        val newPost = post.copy()
+        val newPost = post.copy(id = ++lastId, likes = post.likes.copy(), comments = post.comments.copy())
         posts += newPost
         return newPost
     }
@@ -29,13 +26,17 @@ object WallService {
     fun update(newPost: Post): Boolean {
         for (index in posts.indices) {
             if (posts[index].id == newPost.id) {
-                posts[index] = newPost.copy()
+                posts[index] = newPost.copy(likes = newPost.likes.copy(), comments = newPost.comments.copy())
                 return true
             }
         }
         return false
     }
 
+    fun clear() {
+        posts = emptyArray()
+        lastId = 0
+    }
 
     fun print() {
         for (post in posts) {
